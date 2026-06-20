@@ -1,0 +1,77 @@
+{
+    "name": "Earthquake_Increamental_refresh",
+    "objectId": "dcebba4a-9a64-467c-91f4-2ea18f27d0c0",
+    "properties": {
+        "jobMode": "CDC",
+        "source": {
+            "type": "Json",
+            "connectionSettings": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                    "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac",
+                    "artifactId": "e082f63b-1fb6-43a3-b4d1-41255d83d6db",
+                    "rootFolder": "Files"
+                }
+            }
+        },
+        "destination": {
+            "type": "LakehouseTable",
+            "connectionSettings": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                    "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac",
+                    "artifactId": "e082f63b-1fb6-43a3-b4d1-41255d83d6db",
+                    "rootFolder": "Tables"
+                }
+            }
+        },
+        "policy": {
+            "timeout": "0.12:00:00",
+            "retry": 0
+        }
+    },
+    "activities": [
+        {
+            "id": "5bf4b4c7-0124-4eed-93b9-13d025cacdf9",
+            "properties": {
+                "source": {
+                    "datasetSettings": {
+                        "location": {
+                            "type": "LakehouseLocation",
+                            "folderPath": "Bronze/earth_quake"
+                        }
+                    },
+                    "storeSettings": {
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "changeDataSettings": {
+                        "readMethod": "SnapshotPlusIncremental"
+                    }
+                },
+                "destination": {
+                    "datasetSettings": {
+                        "schema": "dbo",
+                        "table": "earth_quake_bronze"
+                    },
+                    "applyVOrder": false,
+                    "writeBehavior": "Append"
+                },
+                "enableStaging": false,
+                "translator": {
+                    "type": "TabularTranslator"
+                },
+                "typeConversionSettings": {
+                    "typeConversion": {
+                        "allowDataTruncation": false,
+                        "treatBooleanAsNumber": false
+                    }
+                },
+                "columnFlattenSettings": {
+                    "expandArrayIntoMultipleRows": false,
+                    "flattenNestedProperties": false
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,83 @@
+{
+    "name": "CopyJob_1",
+    "objectId": "48db1e5e-05df-4ab7-a827-5404092ec83c",
+    "properties": {
+        "jobMode": "CDC",
+        "source": {
+            "type": "DelimitedText",
+            "connectionSettings": {
+                "type": "AmazonS3",
+                "externalReferences": {
+                    "connection": "e04a2fba-e8de-431d-912b-68c1043570bb"
+                }
+            }
+        },
+        "destination": {
+            "type": "Parquet",
+            "connectionSettings": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                    "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac",
+                    "artifactId": "e082f63b-1fb6-43a3-b4d1-41255d83d6db",
+                    "rootFolder": "Files"
+                }
+            }
+        },
+        "policy": {
+            "timeout": "0.12:00:00",
+            "retry": 0
+        }
+    },
+    "activities": [
+        {
+            "id": "d9491ba7-cd5d-47b9-8d4c-3be5ec632b84",
+            "properties": {
+                "source": {
+                    "datasetSettings": {
+                        "location": {
+                            "type": "AmazonS3Location",
+                            "bucketName": "ecommerce-lifecycle-s3-bucket"
+                        },
+                        "columnDelimiter": ",",
+                        "rowDelimiter": "\n",
+                        "escapeChar": "\\",
+                        "firstRowAsHeader": true,
+                        "quoteChar": "\""
+                    },
+                    "storeSettings": {
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "changeDataSettings": {
+                        "readMethod": "SnapshotPlusIncremental"
+                    }
+                },
+                "destination": {
+                    "datasetSettings": {
+                        "location": {
+                            "type": "LakehouseLocation",
+                            "folderPath": "Bronze"
+                        },
+                        "compressionCodec": "snappy"
+                    },
+                    "storeSettings": {
+                        "copyBehavior": "PreserveHierarchy"
+                    },
+                    "formatSettings": {
+                        "enableVertiParquet": true
+                    }
+                },
+                "enableStaging": false,
+                "translator": {
+                    "type": "TabularTranslator"
+                },
+                "typeConversionSettings": {
+                    "typeConversion": {
+                        "allowDataTruncation": true,
+                        "treatBooleanAsNumber": false
+                    }
+                }
+            }
+        }
+    ]
+}
