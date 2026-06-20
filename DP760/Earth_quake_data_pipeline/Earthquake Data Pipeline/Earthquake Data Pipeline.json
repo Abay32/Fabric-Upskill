@@ -1,0 +1,143 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CopyJob abay-molla.kassa": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "Earthquake Data Pipeline",
+      "type": "pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [
+          {
+            "name": "API Call - Data to LangingZone",
+            "type": "TridentNotebook",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "0.12:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "typeProperties": {
+              "notebookId": "90e39c2b-7bb6-42b2-81ef-ae9fb7b682bd",
+              "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac",
+              "parameters": {
+                "start_date": {
+                  "value": {
+                    "value": "@formatDateTime(adddays(utcNow(), -1), 'yyyy-MM-dd')",
+                    "type": "Expression"
+                  },
+                  "type": "string"
+                },
+                "end_date": {
+                  "value": {
+                    "value": "@formatDateTime(utcNow(), 'yyyy-MM-dd')",
+                    "type": "Expression"
+                  },
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Increamental Ingest to Bronze - CP job",
+            "type": "InvokeCopyJob",
+            "dependsOn": [
+              {
+                "activity": "API Call - Data to LangingZone",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "0.12:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "typeProperties": {
+              "copyJobId": "dcebba4a-9a64-467c-91f4-2ea18f27d0c0",
+              "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac",
+              "operationType": "RunCopyJob"
+            },
+            "externalReferences": {
+              "connection": "[parameters('CopyJob abay-molla.kassa')]"
+            }
+          },
+          {
+            "name": "To Silver Layer - Increamental Injest",
+            "type": "TridentNotebook",
+            "dependsOn": [
+              {
+                "activity": "Increamental Ingest to Bronze - CP job",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "0.12:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "typeProperties": {
+              "notebookId": "b8b4d8b1-7144-48bd-9b96-fdbaefc6c062",
+              "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac"
+            }
+          },
+          {
+            "name": "To Gold - full refresh",
+            "type": "TridentNotebook",
+            "dependsOn": [
+              {
+                "activity": "To Silver Layer - Increamental Injest",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "0.12:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "typeProperties": {
+              "notebookId": "7287b94c-bb91-43dd-8715-d428fed1a4f9",
+              "workspaceId": "f8e3d19d-f7c2-4966-9804-d462790c6dac",
+              "parameters": {
+                "start_date": {
+                  "value": {
+                    "value": "@formatDateTime(adddays(utcNow(), -1), 'yyyy-MM-dd')",
+                    "type": "Expression"
+                  },
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "variables": {
+          "start_date": {
+            "type": "String"
+          }
+        },
+        "lastModifiedByObjectId": "cf56f162-c721-4ffc-93ea-5618392cedee",
+        "lastPublishTime": "2026-06-20T19:38:00Z"
+      },
+      "dependsOn": []
+    }
+  ]
+}
