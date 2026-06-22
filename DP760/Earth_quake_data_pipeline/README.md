@@ -1,47 +1,124 @@
-# Earthquake-Data-Engineering-Project-with-Microsoft-Fabric
+# 🌍 Earthquake Data Engineering Project with Microsoft Fabric
 
-## Project Overview
-Learn to build an end to end data engineering and analysis pipelineutilising Microsoft Fabric’s Data Factory, Data Engineering, and Power BI experiences. 
+---
 
-Ingesting Earthquake events data from [usgs](https://earthquake.usgs.gov/). 
+## 🚀 Project Overview
 
-Technologies Used: Python, PySpark, Fabric (Data Engineering, Data Factory, Power BI)
+This project demonstrates how to design and implement a **modern, end-to-end data engineering pipeline** using **Microsoft Fabric**. It showcases how to ingest, process, and analyze real-time earthquake data using a layered architecture aligned with industry best practices.
 
-## Getting Started
-To get started with this project, downalod the notebooks in the repository and follow the guidance provided in the YouTube tutorial.
+The pipeline leverages data from the **United States Geological Survey (USGS)** API to build a scalable analytics solution.
 
-## Repository Contents
-`Worldwide Earthquake Events API - Bronze Layer Processing`: This notebook focuses on ingesting raw earthquake data from the USGS API. It performs minimal processing to store data in its original format, serving as the foundational layer for further refinement.
+👉 **Key objective:**  
+Transform raw event data into **analytics-ready datasets** that can drive insights, reporting, and geospatial analysis.
 
-`Worldwide Earthquake Events API - Silver Layer Processing`: This notebook enhances the data from the Bronze layer by cleaning, transforming, and consolidating the earthquake data. It prepares the data for more analytical processing.
+---
 
-`Worldwide Earthquake Events API - Gold Layer Processing`: In this final processing stage, the notebook refines the data to create business-ready datasets. These are optimized for high-value insights and are tailored for specific analytical purposes, such as reporting and visualization in tools like Power BI.
+## 🏗️ Architecture Overview
 
-## Data Attribute Definitions
-`id`: A string identifier for each data record.
+The solution follows the **Medallion Architecture**:
 
-`latitude`: The latitude of the event, stored as a double.
+### 🔹 Bronze Layer (Raw Ingestion)
+- Stores raw earthquake data in its original format
+- Minimal transformation
+- Ensures data traceability and reproducibility
 
-`longitude`: The longitude of the event, also stored as a double.
+### 🔹 Silver Layer (Data Refinement)
+- Parses nested JSON structures (`geometry`, `properties`)
+- Cleans and standardizes data types
+- Handles deduplication and late-arriving data
+- Applies business logic and enrichment
 
-`elevation`: The elevation at which the event occurred, expressed in meters, stored as a double.
+### 🔹 Gold Layer (Business Analytics)
+- Aggregates and structures data for reporting
+- Optimizes datasets for performance
+- Enables advanced analytics and visualization
 
-`title`: A string representing the title or name of the event.
+---
 
-`place_description`: A string describing the location of the event.
+## 🛠️ Technologies Used
 
-`sig`: A bigint (large integer) representing the significance score of the event.
+- **Microsoft Fabric**
+  - Data Engineering (Spark / Notebooks)
+  - Data Factory (Pipelines)
+  - Lakehouse (Delta tables)
+  - Power BI (Visualization)
+- **Python**
+- **PySpark**
+- **KQL (for analytics and geospatial queries)**
 
-`mag`: A double indicating the magnitude of the earthquake.
+---
 
-`magType`: A string describing the type of magnitude scale used.
+## 📥 Data Source
 
-`time`: A timestamp marking the exact time of the event.
+Earthquake event data is sourced from:
 
-`updated`: A timestamp indicating the last update time for the event data.
+🔗 https://earthquake.usgs.gov
 
-## Prerequisites
-- Microsoft Fabric Account.
-- Fabric Administrator (or access to individual with Admin account).
-- Familiarity with Python, Spark, and basic data engineering concepts.
-- Basic Power BI skills.
+The dataset includes:
+- Event metadata
+- Geospatial coordinates
+- Magnitude and classification
+- Temporal information
+
+---
+
+## 📂 Repository Structure
+
+### 📘 Bronze Layer Notebook
+**`Worldwide Earthquake Events API - Bronze Layer Processing`**
+
+- Ingests raw JSON data from USGS
+- Stores data as-is in Lakehouse
+- Retains schema flexibility
+- Acts as the **system-of-record layer**
+
+---
+
+### 📘 Silver Layer Notebook
+**`Worldwide Earthquake Events API - Silver Layer Processing`**
+
+- Parses JSON fields (`geometry`, `properties`)
+- Extracts coordinates (longitude, latitude, depth)
+- Converts epoch timestamps to proper formats
+- Applies **watermarking and deduplication**
+- Prepares clean, structured data
+
+---
+
+### 📘 Gold Layer Notebook
+**`Worldwide Earthquake Events API - Gold Layer Processing`**
+
+- Performs aggregations and business transformations
+- Prepares datasets for reporting and BI tools
+- Supports:
+  - Trend analysis
+  - Magnitude distribution
+  - Geospatial insights
+
+---
+
+## 📊 Data Model & Attribute Definitions
+
+- **id** *(string)* → Unique identifier for each earthquake event  
+- **latitude** *(double)* → Latitude coordinate  
+- **longitude** *(double)* → Longitude coordinate  
+- **depth** *(double)* → Depth of the earthquake (km)  
+- **title** *(string)* → Event title (magnitude + location)  
+- **place** *(string)* → Human-readable location description  
+- **sig** *(integer)* → Significance score  
+- **mag** *(double)* → Earthquake magnitude  
+- **magType** *(string)* → Magnitude scale type  
+- **event_time** *(timestamp)* → Time when the earthquake occurred  
+- **updated_time** *(timestamp)* → Last update time of the event  
+
+---
+
+## 🌐 Geospatial Capabilities
+
+This project enables **geospatial analytics**, including:
+
+- Creating geo-points from coordinates  
+- Distance calculations between events  
+- Regional clustering  
+- Map-based visualization in Power BI or KQL, python package
+
